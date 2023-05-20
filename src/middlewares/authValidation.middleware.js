@@ -9,7 +9,6 @@ export async function authValidation(req, res, next) {
         const session = await db.query(`SELECT sessions."userId" FROM sessions WHERE sessions.token = $1;`, [token]);
         if (session.rowCount === 0) return res.sendStatus(401);
         res.locals = session.rows[0]
-        console.log(session.rows[0]);
 
         next();
 
