@@ -71,3 +71,24 @@ export async function redirectTo(req, res) {
     }
 }
 
+export async function deleteUrl(req, res) {
+    const { id } = req.params;
+    const { userId } = res.locals;
+
+    try {
+        const oneUrl = await db.query(`
+        SELECT "shortenedUrls".id, "shortenedUrls"."userId"
+        FROM "shortenedUrls" WHERE "shortenedUrls".id = $1;`, [id]);
+
+        if (oneUrl.rowCount === 0) return res.sendStatus(404);
+        if (userId !== oneUrl.rows[0].userId) return res.sendStatus(401);
+
+        await db.query(`DELETE FROM "shortenedUrls"
+             WHERE "shortenedUrls".id = $1;`, [id]);
+
+        res.sendStatus(204);
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
