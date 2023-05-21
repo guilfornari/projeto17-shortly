@@ -40,9 +40,18 @@ export async function getUser(req, res) {
 export async function getRanking(req, res) {
 
     try {
-        const ranking = await db.query(`SELECT * FROM "shortenedUrls";`);
+        const ranking = await db.query(`
+        SELECT
+        users.id,
+        users.name,
+        COUNT("shortenedUrls"."shortUrl") AS "linksCount",
+        COALESCE(SUM("shortenedUrls"."visitCount"),0) AS "visitCount"
+        FROM users
+        LEFT JOIN "shortenedUrls" ON users.id = "shortenedUrls"."userId"
+        GROUP BY users.id, users.name
+        ORDER BY "visitCount" DESC;`);
 
-        res.status(200).send(ranking);
+        res.status(200).send(ranking.rows);
 
     } catch (err) {
         res.status(500).send(err.message);

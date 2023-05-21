@@ -8,10 +8,7 @@ const urlRouter = Router();
 
 urlRouter.get("/urls/:id", getOneUrl);
 urlRouter.get("/urls/open/:shortUrl", redirectTo);
-
-urlRouter.use(authValidation);
-
-urlRouter.post("/urls/shorten", validateSchema(urlSchema), createUrl);
-urlRouter.delete("/urls/:id", deleteUrl);
+urlRouter.post("/urls/shorten", validateSchema(urlSchema), authValidation, createUrl);
+urlRouter.delete("/urls/:id", authValidation, deleteUrl);
 
 export default urlRouter;
