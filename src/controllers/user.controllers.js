@@ -49,7 +49,8 @@ export async function getRanking(req, res) {
         FROM users
         LEFT JOIN "shortenedUrls" ON users.id = "shortenedUrls"."userId"
         GROUP BY users.id, users.name
-        ORDER BY "visitCount" DESC;`);
+        ORDER BY "visitCount" DESC
+        LIMIT 10;`);
 
         res.status(200).send(ranking.rows);
 
